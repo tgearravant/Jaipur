@@ -12,7 +12,7 @@ public class Player {
 	public void addCardToHand(Card c){
 		hand.add(c);
 	}
-	public void addReource(){
-		
+	public void addReource(Resource r){
+		this.gatheredResources.add(r);
 	}
 }

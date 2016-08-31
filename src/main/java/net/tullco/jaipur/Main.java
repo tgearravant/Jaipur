@@ -1,7 +1,6 @@
 package net.tullco.jaipur;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -12,14 +11,13 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.tullco.jaipur.models.Card;
-import net.tullco.jaipur.models.Player;
+import net.tullco.jaipur.models.cards.DiamondCard;
 
 public class Main extends Application {
 	ArrayList<Card> deck = new ArrayList<Card>();
@@ -28,36 +26,9 @@ public class Main extends Application {
 	ArrayList<Card> market = new ArrayList<Card>();
 	ArrayList<Card> discard = new ArrayList<Card>();
 	
-	private void setUp(){
-		deck.add(new Card("Camel"));
-		for(int i=0; i<6; i++)
-			deck.add(new Card("Gems"));
-		for(int i=0; i<6; i++)
-			deck.add(new Card("Gold"));
-		for(int i=0; i<6; i++)
-			deck.add(new Card("Silver"));
-		for(int i=0; i<8; i++)
-			deck.add(new Card("Cloth"));
-		for(int i=0; i<8; i++)
-			deck.add(new Card("Spices"));
-		for(int i=0; i<10; i++)
-			deck.add(new Card("Leather"));
-		Collections.shuffle(deck);
-		market.add(new Card("Camel"));
-		market.add(new Card("Camel"));
-		market.add(new Card("Camel"));
-		market.add(deck.remove(0));
-		market.add(deck.remove(0));
-		Player player1 = new Player();
-		Player player2 = new Player();
-		for(int i=0; i<5;i++){
-			player1.addCardToHand(deck.remove(0));
-			player2.addCardToHand(deck.remove(0));
-		}
-	}
+	public static final double FPS=30;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		setUp();
 		primaryStage.setTitle("Jaipur");
 		
 		Group root = new Group();
@@ -77,13 +48,12 @@ public class Main extends Application {
         final long timeStart = System.currentTimeMillis();
         
         KeyFrame kf = new KeyFrame(
-            Duration.seconds(1d/30),
+            Duration.seconds(1d/FPS),
             new EventHandler<ActionEvent>()
             {
                 public void handle(ActionEvent ae)
                 {
-                    double t = (System.currentTimeMillis() - timeStart) / 1000.0; 
-
+                    double t = (System.currentTimeMillis() - timeStart) / 1000.0;
                     // Clear the canvas
                     gc.clearRect(0, 0, 512,512);
                     
@@ -91,6 +61,7 @@ public class Main extends Application {
             	    gc.setFont( theFont );
             	    gc.fillText( "Hello, World!", 60, t*100 );
             	    gc.strokeText( "Hello, World!", 60, t*100 );
+            	    gc.drawImage(new DiamondCard().getImage(), 60, 50);
                 }
             });
         
