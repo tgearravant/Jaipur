@@ -7,6 +7,7 @@ import java.util.List;
 
 import javafx.animation.Timeline;
 import net.tullco.jaipur.models.Card;
+import net.tullco.jaipur.models.Market;
 import net.tullco.jaipur.models.Player;
 import net.tullco.jaipur.models.cards.CamelCard;
 import net.tullco.jaipur.models.cards.ClothCard;
@@ -37,18 +38,7 @@ public class Initialize implements StateTransition {
 		for(int i=0; i<8; i++)
 			deck.add(new CamelCard());
 		Collections.shuffle(deck);
-		ArrayList<Card> market = new ArrayList<Card>();
-		market.add(new CamelCard());
-		market.add(new CamelCard());
-		market.add(new CamelCard());
-		market.add(deck.remove(0));
-		market.add(deck.remove(0));
-		for(int i=0;i<market.size();i++){
-			Card c = market.get(i);
-			c.setDestinationCoordinates(State.MARKET_X + i * (((State.CANVAS_X-10)-State.MARKET_X)/5), State.MARKET_Y);
-			State.addSprite(c);
-			State.addClickable(c);
-		}
+		Market market = new Market();
 		Player player1 = new Player();
 		Player player2 = new Player();
 		for(int i=0; i<5;i++){
@@ -57,15 +47,19 @@ public class Initialize implements StateTransition {
 		}
 		player1.setDestinationCoordinates(State.HAND_1_X, State.HAND_1_Y);
 		player2.setDestinationCoordinates(State.HAND_2_X, State.HAND_2_Y);
-		State.addSprite(player1);
+		State.addRenderable(player1);
 		player1.setClickables();
-		State.addSprite(player2);
+		State.addRenderable(player2);
+		State.addRenderable(market);
 		State.setPlayer1(player1);
 		State.setPlayer2(player2);
 		State.setMarket(market);
 		State.setDeck(deck);
+		State.setDiscard(new ArrayList<Card>());
 		Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount( Timeline.INDEFINITE );
+        State.getMarket().replenish();
+		State.getMarket().setClickables();
         State.setState("PLAYER1");
 	}
 	public List<String> getValidOldStates(){

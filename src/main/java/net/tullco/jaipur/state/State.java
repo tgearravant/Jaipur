@@ -3,21 +3,19 @@ package net.tullco.jaipur.state;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 
 import javafx.scene.canvas.Canvas;
 import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
 import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.Player;
-import net.tullco.jaipur.models.Sprite;
+import net.tullco.jaipur.models.Renderable;
 import net.tullco.jaipur.models.Clickable;
+import net.tullco.jaipur.models.Market;
 import net.tullco.jaipur.state.transitions.StateTransition;
 
 public class State {
 	public static int CANVAS_X=1280;
 	public static int CANVAS_Y=720;
-	public static int MARKET_X=10;
-	public static int MARKET_Y=300;
 	public static int HAND_1_X=10;
 	public static int HAND_1_Y=10;
 	public static int HAND_2_X=10;
@@ -26,14 +24,14 @@ public class State {
 	private static String state = "INIT";
 	private static String oldState;
 	private static Canvas canvas;
-	private static List<Sprite> sprites=new ArrayList<Sprite>();
+	private static List<Renderable> renderables=new ArrayList<Renderable>();
 	private static List<Clickable> clickables=new ArrayList<Clickable>();
 	private static List<String> validStates;
-	private static ArrayList<Card> deck = new ArrayList<Card>();
+	private static ArrayList<Card> deck;
 	private static Player player1;
 	private static Player player2;
-	private static ArrayList<Card> market = new ArrayList<Card>();
-	private static ArrayList<Card> discard = new ArrayList<Card>();
+	private static Market market;
+	private static ArrayList<Card> discard;
 	public static void changeState(StateTransition t) throws InvalidStateTransitionException{
 		if(!t.getValidOldStates().contains(State.state))
 			throw new InvalidStateTransitionException();
@@ -67,10 +65,10 @@ public class State {
 	public static void setPlayer2(Player player2) {
 		State.player2 = player2;
 	}
-	public static ArrayList<Card> getMarket() {
+	public static Market getMarket() {
 		return market;
 	}
-	public static void setMarket(ArrayList<Card> market) {
+	public static void setMarket(Market market) {
 		State.market = market;
 	}
 	public static ArrayList<Card> getDiscard() {
@@ -82,11 +80,11 @@ public class State {
 	public static void setCanvas(Canvas c){
 		State.canvas=c;
 	}
-	public static void addSprite(Sprite s){
-		State.sprites.add(s);
+	public static void addRenderable(Renderable s){
+		State.renderables.add(s);
 	}
-	public static List<Sprite> getSprites(){
-		return State.sprites;
+	public static List<Renderable> getRenderable(){
+		return State.renderables;
 	}
 	public static void addClickable(Clickable c){
 		State.clickables.add(c);
@@ -101,15 +99,16 @@ public class State {
 		State.validStates = new ArrayList<String>(Arrays.asList(array));
 		return State.validStates;
 	}
-	public static void renderSprites(){
+/*	public static void renderSprites(){
 		ListIterator<Sprite> spriteIterator = State.sprites.listIterator();
 		while(spriteIterator.hasNext()){
 			spriteIterator.next().render(canvas.getGraphicsContext2D());
 		}
-	}
+	}*/
 	public static void render(){
         canvas.getGraphicsContext2D().clearRect(0, 0, State.CANVAS_X, State.CANVAS_Y);
-        renderSprites();
+        for(Renderable r:State.renderables)
+        	r.render(canvas.getGraphicsContext2D());
 	}
 	
 }

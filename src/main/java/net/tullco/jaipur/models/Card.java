@@ -6,7 +6,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public abstract class Card implements Sprite, Clickable {
+public abstract class Card implements Sprite, Clickable, Renderable {
 
 	private final int CARD_SIZE_X=70;
 	private final int CARD_SIZE_Y=100;
@@ -94,5 +94,14 @@ public abstract class Card implements Sprite, Clickable {
 			return;
 		this.active=true;
 		this.setDestinationCoordinates(destinationX+10, destinationY-10);
+	}
+	public boolean active(){
+		return this.active;
+	}
+	public void printCoords(){
+		System.out.println("X: "+this.xLoc + " Y: "+this.yLoc);
+	}
+	public void printDestinationCoords(){
+		System.out.println("Dest X: "+this.destinationX + " Dest Y: "+this.destinationY);
 	}
 }

@@ -1,24 +1,53 @@
 package net.tullco.jaipur.models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
+import net.tullco.jaipur.models.cards.CamelCard;
 import net.tullco.jaipur.state.State;
 
-public class Player implements Sprite {
+public class Player implements Sprite, Renderable {
+	
+	private final static int  HAND_SIZE_X=600;
+	
 	private ArrayList<Card> hand;
+	private ArrayList<CamelCard> herd;
 	private ArrayList<Resource> gatheredResources;
-	@SuppressWarnings("unused")
 	private int xLocation;
-	@SuppressWarnings("unused")
 	private int yLocation;
 	public Player(){
 		this.hand = new ArrayList<Card>();
+		this.herd = new ArrayList<CamelCard>();
 		this.gatheredResources = new ArrayList<Resource>();
 	}
 	public void addCardToHand(Card c){
-		hand.add(c);
+		if(c instanceof CamelCard){
+			herd.add((CamelCard) c);
+		}
+		else{
+			hand.add(c);
+		}
+	}
+	public void addCardsToHand(List<Card> cards){
+		for(Card c: cards)
+			addCardToHand(c);
+	}
+	public List<Card> getHand(){
+		return this.hand;
+	}
+	public int herdSize(){
+		return this.herd.size();
+	}
+	public List<CamelCard> getCamels(int num) throws IndexOutOfBoundsException{
+		if(num > this.herdSize())
+			throw new IndexOutOfBoundsException();
+		List<CamelCard> removedCamels = new ArrayList<CamelCard>();
+		for(int i=0;i<num;i++)
+			removedCamels.add(this.herd.remove(0));
+		return removedCamels;
 	}
 	public void addReource(Resource r){
 		this.gatheredResources.add(r);
@@ -29,7 +58,6 @@ public class Player implements Sprite {
 			c.render(gc);
 		}
 	}
-	@Override
 	public Rectangle2D getBoundary() {
 		//TODO I should do this at some point. ;)
 		return null;
@@ -40,9 +68,12 @@ public class Player implements Sprite {
 		yLocation=yDest;
 		for(int i=0;i<hand.size();i++){
 			Card c = hand.get(i);
-			int xCoord = (xDest+(((State.CANVAS_X-10)-xDest)/hand.size())*i);
+			int xCoord = (xDest+((HAND_SIZE_X-xDest)/hand.size())*i);
 			c.setDestinationCoordinates(xCoord, yDest);
 		}
+	}
+	public void resetDestinationCoordinates(){
+		setDestinationCoordinates(this.xLocation,this.yLocation);
 	}
 	public void setClickables(){
 		for(Card c : hand)
@@ -53,5 +84,22 @@ public class Player implements Sprite {
 			if (State.getClickables().contains(c))
 				State.getClickables().remove(c);
 		}
+	}
+	public void resetClickables(){
+		this.unsetClickables();
+		this.setClickables();
+	}
+	public List<Card> removeActiveCards(){
+		Iterator<Card> i = this.hand.iterator();
+		ArrayList<Card> removedCards = new ArrayList<Card>();
+		while(i.hasNext()){
+			Card c = i.next();
+			if(c.active()){
+				c.deactivate();
+				removedCards.add(c);
+			}
+		}
+		this.hand.removeAll(removedCards);
+		return removedCards;
 	}
 }

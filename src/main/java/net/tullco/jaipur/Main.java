@@ -48,7 +48,9 @@ public class Main extends Application {
 	    final Font theFont = Font.font( "Times New Roman", FontWeight.BOLD, 48 );
 	    gc.setFont( theFont );
 		Timeline gameLoop = new Timeline();
+		Timeline debugLoop = new Timeline();
         gameLoop.setCycleCount( Timeline.INDEFINITE );
+        debugLoop.setCycleCount( Timeline.INDEFINITE );
         State.changeState(new Initialize());
         
         KeyFrame kf = new KeyFrame(
@@ -60,9 +62,20 @@ public class Main extends Application {
                 	State.render();
                 }
             });
-        
+        KeyFrame kf_debug = new KeyFrame(
+                Duration.seconds(1),
+                new EventHandler<ActionEvent>()
+                {
+                    public void handle(ActionEvent ae)
+                    {
+                    	for(Card c:State.getMarket().getContents())
+                    		System.out.println(c.getResource());
+                    }
+                });
         gameLoop.getKeyFrames().add( kf );
+        debugLoop.getKeyFrames().add( kf_debug );
         gameLoop.play();
+        debugLoop.play();
         
         primaryStage.show();
         Controller.setScene(theScene);
