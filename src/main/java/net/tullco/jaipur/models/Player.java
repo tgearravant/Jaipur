@@ -9,7 +9,9 @@ import net.tullco.jaipur.state.State;
 public class Player implements Sprite {
 	private ArrayList<Card> hand;
 	private ArrayList<Resource> gatheredResources;
+	@SuppressWarnings("unused")
 	private int xLocation;
+	@SuppressWarnings("unused")
 	private int yLocation;
 	public Player(){
 		this.hand = new ArrayList<Card>();
@@ -26,7 +28,6 @@ public class Player implements Sprite {
 		for (Card c: hand){
 			c.render(gc);
 		}
-		
 	}
 	@Override
 	public Rectangle2D getBoundary() {
@@ -35,10 +36,22 @@ public class Player implements Sprite {
 	}
 	@Override
 	public void setDestinationCoordinates(int xDest, int yDest) {
+		xLocation=xDest;
+		yLocation=yDest;
 		for(int i=0;i<hand.size();i++){
 			Card c = hand.get(i);
 			int xCoord = (xDest+(((State.CANVAS_X-10)-xDest)/hand.size())*i);
 			c.setDestinationCoordinates(xCoord, yDest);
-		}		
+		}
+	}
+	public void setClickables(){
+		for(Card c : hand)
+			State.addClickable(c);
+	}
+	public void unsetClickables(){
+		for(Card c : hand){
+			if (State.getClickables().contains(c))
+				State.getClickables().remove(c);
+		}
 	}
 }

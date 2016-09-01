@@ -10,6 +10,7 @@ import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
 import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.Player;
 import net.tullco.jaipur.models.Sprite;
+import net.tullco.jaipur.models.Clickable;
 import net.tullco.jaipur.state.transitions.StateTransition;
 
 public class State {
@@ -26,6 +27,7 @@ public class State {
 	private static String oldState;
 	private static Canvas canvas;
 	private static List<Sprite> sprites=new ArrayList<Sprite>();
+	private static List<Clickable> clickables=new ArrayList<Clickable>();
 	private static List<String> validStates;
 	private static ArrayList<Card> deck = new ArrayList<Card>();
 	private static Player player1;
@@ -82,6 +84,15 @@ public class State {
 	}
 	public static void addSprite(Sprite s){
 		State.sprites.add(s);
+	}
+	public static List<Sprite> getSprites(){
+		return State.sprites;
+	}
+	public static void addClickable(Clickable c){
+		State.clickables.add(c);
+	}
+	public static List<Clickable> getClickables(){
+		return State.clickables;
 	}
 	public static List<String> getValidStates(){
 		if(State.validStates!=null)

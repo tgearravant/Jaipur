@@ -57,15 +57,7 @@ public class Main extends Application {
             {
                 public void handle(ActionEvent ae)
                 {
-                    //double t = (System.currentTimeMillis() - timeStart) / 1000.0;
                 	State.render();
-                    // Clear the canvas
-                    
-                    // background image clears canvas
-            	    /*gc.setFont( theFont );
-            	    gc.fillText( "Hello, World!", 60, t*100 );
-            	    gc.strokeText( "Hello, World!", 60, t*100 );
-            	    dc.render(gc);*/
                 }
             });
         
@@ -73,6 +65,7 @@ public class Main extends Application {
         gameLoop.play();
         
         primaryStage.show();
+        Controller.setScene(theScene);
 	}
 	
 	public static void main(String[] args){

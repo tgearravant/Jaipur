@@ -6,13 +6,13 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public abstract class Card implements Sprite {
+public abstract class Card implements Sprite, Clickable {
 
-	private final int CARD_SIZE_X=60;
-	private final int CARD_SIZE_Y=90;
+	private final int CARD_SIZE_X=70;
+	private final int CARD_SIZE_Y=100;
 	private final int CARD_DRAW_LOCATION_X=0;
 	private final int CARD_DRAW_LOCATION_Y=0;
-	private final double MOVEMENT_SECONDS=3.0;
+	private final double MOVEMENT_SECONDS=2.0;
 	private final int MOVEMENT_GAIN=6;
 
 	private String resource;
@@ -24,6 +24,7 @@ public abstract class Card implements Sprite {
 	private int destinationX;
 	private int destinationY;
 	private long moveStartTime;
+	private boolean active=false;
 	
 	public Card(String resource){
 		this.resource=resource;
@@ -74,5 +75,24 @@ public abstract class Card implements Sprite {
 	public int getMovementCoord(double completionPercentage, int start, int destination){
 		double newLocation = ((Math.pow(completionPercentage-1, MOVEMENT_GAIN))*(start-destination))+destination;
 		return (int) Math.round(newLocation);
+	}
+	public void click(){
+		if(this.active){
+			this.deactivate();
+		}else{
+			this.activate();
+		}
+	}
+	public void deactivate(){
+		if (!this.active)
+			return;
+		this.active=false;
+		this.setDestinationCoordinates(destinationX-10, destinationY+10);
+	}
+	public void activate(){
+		if(this.active)
+			return;
+		this.active=true;
+		this.setDestinationCoordinates(destinationX+10, destinationY-10);
 	}
 }

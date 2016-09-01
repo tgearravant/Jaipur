@@ -8,7 +8,6 @@ import java.util.List;
 import javafx.animation.Timeline;
 import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.Player;
-import net.tullco.jaipur.models.Sprite;
 import net.tullco.jaipur.models.cards.CamelCard;
 import net.tullco.jaipur.models.cards.ClothCard;
 import net.tullco.jaipur.models.cards.DiamondCard;
@@ -45,9 +44,10 @@ public class Initialize implements StateTransition {
 		market.add(deck.remove(0));
 		market.add(deck.remove(0));
 		for(int i=0;i<market.size();i++){
-			Sprite s = market.get(i);
-			s.setDestinationCoordinates(State.MARKET_X + i * (((State.CANVAS_X-10)-State.MARKET_X)/5), State.MARKET_Y);
-			State.addSprite(s);
+			Card c = market.get(i);
+			c.setDestinationCoordinates(State.MARKET_X + i * (((State.CANVAS_X-10)-State.MARKET_X)/5), State.MARKET_Y);
+			State.addSprite(c);
+			State.addClickable(c);
 		}
 		Player player1 = new Player();
 		Player player2 = new Player();
@@ -58,6 +58,7 @@ public class Initialize implements StateTransition {
 		player1.setDestinationCoordinates(State.HAND_1_X, State.HAND_1_Y);
 		player2.setDestinationCoordinates(State.HAND_2_X, State.HAND_2_Y);
 		State.addSprite(player1);
+		player1.setClickables();
 		State.addSprite(player2);
 		State.setPlayer1(player1);
 		State.setPlayer2(player2);
