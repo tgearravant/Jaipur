@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.cards.DiamondCard;
+import net.tullco.jaipur.state.State;
+import net.tullco.jaipur.state.transitions.Initialize;
 
 public class Main extends Application {
 	ArrayList<Card> deck = new ArrayList<Card>();
@@ -34,9 +36,12 @@ public class Main extends Application {
 		Group root = new Group();
 		Scene theScene = new Scene( root );
 		primaryStage.setScene( theScene );
-		Canvas canvas = new Canvas( 400, 200 );
+		Canvas canvas = new Canvas(State.CANVAS_X, State.CANVAS_Y);
 		root.getChildren().add(canvas);
+		State.setCanvas(canvas);
 		final GraphicsContext gc = canvas.getGraphicsContext2D();
+		Card dc = new DiamondCard();
+		dc.setDestinationCoordinates(300, 100);
 	    gc.setFill( Color.RED );
 	    gc.setStroke( Color.BLACK );
 	    gc.setLineWidth(2);
@@ -44,8 +49,7 @@ public class Main extends Application {
 	    gc.setFont( theFont );
 		Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount( Timeline.INDEFINITE );
-        
-        final long timeStart = System.currentTimeMillis();
+        State.changeState(new Initialize());
         
         KeyFrame kf = new KeyFrame(
             Duration.seconds(1d/FPS),
@@ -53,15 +57,15 @@ public class Main extends Application {
             {
                 public void handle(ActionEvent ae)
                 {
-                    double t = (System.currentTimeMillis() - timeStart) / 1000.0;
+                    //double t = (System.currentTimeMillis() - timeStart) / 1000.0;
+                	State.render();
                     // Clear the canvas
-                    gc.clearRect(0, 0, 512,512);
                     
                     // background image clears canvas
-            	    gc.setFont( theFont );
+            	    /*gc.setFont( theFont );
             	    gc.fillText( "Hello, World!", 60, t*100 );
             	    gc.strokeText( "Hello, World!", 60, t*100 );
-            	    gc.drawImage(new DiamondCard().getImage(), 60, 50);
+            	    dc.render(gc);*/
                 }
             });
         
