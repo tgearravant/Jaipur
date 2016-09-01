@@ -41,10 +41,10 @@ public class Player implements Sprite, Renderable {
 	public int herdSize(){
 		return this.herd.size();
 	}
-	public List<CamelCard> getCamels(int num) throws IndexOutOfBoundsException{
+	public List<Card> getCamels(int num) throws IndexOutOfBoundsException{
 		if(num > this.herdSize())
 			throw new IndexOutOfBoundsException();
-		List<CamelCard> removedCamels = new ArrayList<CamelCard>();
+		List<Card> removedCamels = new ArrayList<Card>();
 		for(int i=0;i<num;i++)
 			removedCamels.add(this.herd.remove(0));
 		return removedCamels;

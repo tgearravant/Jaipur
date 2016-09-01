@@ -75,7 +75,10 @@ public class TakeAction implements StateTransition {
 			if(handSelections.size()==0){
 				if(allCamels&&anyCamels){
 					player.addCardsToHand(State.getMarket().removeActiveCards());
-				}else if(!allCamels&&!anyCamels){
+				}else if(!allCamels&&!anyCamels&&player.herdSize()>=marketSelections.size()){
+					int camelsNeeded = marketSelections.size();
+					player.addCardsToHand(State.getMarket().removeActiveCards());
+					State.getMarket().addCards(player.getCamels(camelsNeeded));
 				}
 			}
 		}

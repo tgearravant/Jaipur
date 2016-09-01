@@ -54,24 +54,19 @@ public class Main extends Application {
         State.changeState(new Initialize());
         
         KeyFrame kf = new KeyFrame(
-            Duration.seconds(1d/FPS),
-            new EventHandler<ActionEvent>()
-            {
-                public void handle(ActionEvent ae)
-                {
-                	State.render();
-                }
-            });
+		    Duration.seconds(1d/FPS),
+		    new EventHandler<ActionEvent>(){
+		        public void handle(ActionEvent ae){
+		        	State.render();
+		        }
+		    });
         KeyFrame kf_debug = new KeyFrame(
                 Duration.seconds(1),
-                new EventHandler<ActionEvent>()
-                {
-                    public void handle(ActionEvent ae)
-                    {
-                    	for(Card c:State.getMarket().getContents())
-                    		System.out.println(c.getResource());
+                new EventHandler<ActionEvent>(){
+                    public void handle(ActionEvent ae){
+                    	
                     }
-                });
+			});
         gameLoop.getKeyFrames().add( kf );
         debugLoop.getKeyFrames().add( kf_debug );
         gameLoop.play();
