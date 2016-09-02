@@ -11,17 +11,20 @@ import net.tullco.jaipur.state.State;
 
 public class Player implements Sprite, Renderable {
 	
-	private final static int  HAND_SIZE_X=600;
+	private final static int HERD_BUFFER_X = 20;
+	private final static int HAND_SIZE_X=600;
 	
 	private ArrayList<Card> hand;
 	private ArrayList<CamelCard> herd;
 	private ArrayList<Resource> gatheredResources;
+	private Card dummyCamel;
 	private int xLocation;
 	private int yLocation;
 	public Player(){
 		this.hand = new ArrayList<Card>();
 		this.herd = new ArrayList<CamelCard>();
 		this.gatheredResources = new ArrayList<Resource>();
+		this.dummyCamel = new CamelCard();
 	}
 	public void addCardToHand(Card c){
 		if(c instanceof CamelCard){
@@ -57,6 +60,11 @@ public class Player implements Sprite, Renderable {
 		for (Card c: hand){
 			c.render(gc);
 		}
+		this.dummyCamel.render(gc);
+		Rectangle2D pic=this.dummyCamel.getBoundary();
+		int x = (int) (pic.getMaxX()+HERD_BUFFER_X);
+		int y = (int) ((pic.getMaxY()+pic.getMinY())/2);
+		gc.strokeText(Integer.toString(this.herdSize()), x, y);
 	}
 	public Rectangle2D getBoundary() {
 		//TODO I should do this at some point. ;)
@@ -64,6 +72,7 @@ public class Player implements Sprite, Renderable {
 	}
 	@Override
 	public void setDestinationCoordinates(int xDest, int yDest) {
+		this.dummyCamel.setDestinationCoordinates(HERD_BUFFER_X+HAND_SIZE_X, yDest);
 		xLocation=xDest;
 		yLocation=yDest;
 		for(int i=0;i<hand.size();i++){
