@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
 import net.tullco.jaipur.models.Player;
 import net.tullco.jaipur.models.Renderable;
@@ -15,6 +17,9 @@ import net.tullco.jaipur.models.Market;
 import net.tullco.jaipur.state.transitions.StateTransition;
 
 public class State {
+	
+	public static int HAND_LIMIT=7;
+	
 	public static int CANVAS_X=1280;
 	public static int CANVAS_Y=720;
 	public static int HAND_1_X=10;
@@ -33,6 +38,7 @@ public class State {
 	private static Player player2;
 	private static Market market;
 	private static Discard discard;
+
 	public static void changeState(StateTransition t) throws InvalidStateTransitionException{
 		if(!t.getValidOldStates().contains(State.state))
 			throw new InvalidStateTransitionException();
@@ -116,7 +122,9 @@ public class State {
 		}
 	}*/
 	public static void render(){
-        canvas.getGraphicsContext2D().clearRect(0, 0, State.CANVAS_X, State.CANVAS_Y);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.LIGHTGREY);
+        gc.fillRect(0, 0, State.CANVAS_X, State.CANVAS_Y);
         for(Renderable r:State.renderables)
         	r.render(canvas.getGraphicsContext2D());
 	}

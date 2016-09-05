@@ -145,4 +145,7 @@ public abstract class Card implements Sprite, Clickable, Renderable, Comparable<
 		Card.cardBack = new Image(Card.class.getClassLoader().getResourceAsStream("assets/img/cards/back.png"));
 		return cardBack;
 	}
+	public static void moveActiveCards(CardContainer from, CardContainer to){
+		to.addCards(from.removeActiveCards());
+	}
 }

@@ -37,7 +37,7 @@ public class TakeAction implements StateTransition {
 			}
 		//if nothing is selected, throw an invalid transition exception
 		if(marketSelections.size()==0 && handSelections.size()==0)
-			throw new InvalidStateTransitionException();
+			this.resetAndThrowException(marketSelections, handSelections);
 		// if one market card is selected, take it
 		else if(marketSelections.size()==1 && handSelections.size()==0 ){
 			player.addCards(State.getMarket().removeActiveCards());
@@ -49,14 +49,14 @@ public class TakeAction implements StateTransition {
 				Card firstCard = handSelections.get(0);
 				for(int i=1;i<handSelections.size();i++){
 					if (firstCard.getResource()!=handSelections.get(i).getResource())
-						throw new InvalidStateTransitionException();
+						this.resetAndThrowException(marketSelections, handSelections);
 				}
 			}
 			State.getDiscard().addCards(player.removeActiveCards());
 		}
 		// If you selected more hand cards than market cards, throw an exception 
 		else if(marketSelections.size()<handSelections.size()){
-			throw new InvalidStateTransitionException();
+			this.resetAndThrowException(marketSelections, handSelections);
 		}
 		// Otherwise, we're trying to trade cards or take camels, so let's figure out which.
 		else{
@@ -71,7 +71,7 @@ public class TakeAction implements StateTransition {
 					anyCamels=true;
 				}
 			}
-			//if hand size is zero, we might be taking camels. Let's figure that out...
+			//if hand size is zero, are either taking camels or trading camels for market cards.
 			if(handSelections.size()==0){
 				if(allCamels&&anyCamels){
 					player.addCards(State.getMarket().removeActiveCards());
@@ -79,13 +79,27 @@ public class TakeAction implements StateTransition {
 					int camelsNeeded = marketSelections.size();
 					player.addCards(State.getMarket().removeActiveCards());
 					State.getMarket().addCards(player.getCamels(camelsNeeded));
+				}else{
+					this.resetAndThrowException(marketSelections, handSelections);
 				}
+			}else{
+				if(anyCamels)
+					this.resetAndThrowException(marketSelections, handSelections);
+				 
 			}
 		}
 		State.getMarket().replenish();
 		player.resetDestinationCoordinates();
 		State.getMarket().resetClickables();
 		player.unsetClickables();
+		if(player.getSize() > State.HAND_LIMIT){
+			player.resetClickables();
+			if(State.getState().equals("PLAYER1")){
+				State.setState("PLAYER1DISCARD");
+			}else{
+				State.setState("PLAYER2DISCARD");
+			}
+		}
 		if(State.getState().equals("PLAYER1")){
 			State.getPlayer2().setClickables();
 			State.setState("PLAYER2");
@@ -95,6 +109,14 @@ public class TakeAction implements StateTransition {
 		}
 	}
 
+	private void resetAndThrowException(List<Card> marketSelections, List<Card> handSelections) throws InvalidStateTransitionException{
+		for(Card c: marketSelections)
+			c.deactivate();
+		for(Card c: handSelections)
+			c.deactivate();
+		throw new InvalidStateTransitionException();
+	}
+	
 	@Override
 	public List<String> getValidOldStates() {
 		String[] states={"PLAYER1","PLAYER2"};

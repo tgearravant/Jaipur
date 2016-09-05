@@ -6,7 +6,7 @@ import java.util.List;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Discard implements CardContainer, Renderable {
-	private static final int DISCARD_LOCATION_X=600;
+	private static final int DISCARD_LOCATION_X=800;
 	private static final int DISCARD_LOCATION_Y=200;
 
 	private ArrayList<Card> discard;
@@ -20,20 +20,17 @@ public class Discard implements CardContainer, Renderable {
 			return;
 		else if(this.getSize()==1){
 			Card c = this.discard.get(0);
-			c.setHidden(false);
 			c.render(gc);
 		}
 		else{
 			Card c0 = this.discard.get(this.discard.size()-1);
 			c0.setHidden(false);
-			c0.render(gc);
 			Card c1 = this.discard.get(this.discard.size()-2);
-			if(!c0.atDestination()){
+			if(!c0.atDestination())
 				c1.setHidden(false);
-				c1.render(gc);
-			}else{
-				c1.setHidden(true);
-			}
+		}
+		for(Card c:this.discard){
+			c.render(gc);
 		}
 	}
 
@@ -55,6 +52,7 @@ public class Discard implements CardContainer, Renderable {
 		c.setHidden(true);
 		c.setClickable(false);
 		c.deactivate();
+		this.discard.add(c); 
 	}
 
 	@Override

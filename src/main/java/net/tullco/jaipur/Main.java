@@ -17,6 +17,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import net.tullco.jaipur.models.Card;
+import net.tullco.jaipur.models.Discard;
 import net.tullco.jaipur.models.cards.DiamondCard;
 import net.tullco.jaipur.state.State;
 import net.tullco.jaipur.state.transitions.Initialize;
@@ -28,7 +29,7 @@ public class Main extends Application {
 	ArrayList<Card> market = new ArrayList<Card>();
 	ArrayList<Card> discard = new ArrayList<Card>();
 	
-	public static final double FPS=30;
+	public static final double FPS=60;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Jaipur");
@@ -64,8 +65,10 @@ public class Main extends Application {
                 Duration.seconds(1),
                 new EventHandler<ActionEvent>(){
                     public void handle(ActionEvent ae){
-                    	
-                    }
+                    	Discard d = State.getDiscard();
+                    	if(d!=null)
+                    		System.out.println(d.getSize());
+                    	}
 			});
         gameLoop.getKeyFrames().add( kf );
         debugLoop.getKeyFrames().add( kf_debug );
@@ -75,7 +78,6 @@ public class Main extends Application {
         primaryStage.show();
         Controller.setScene(theScene);
 	}
-	
 	public static void main(String[] args){
 		launch(args);
 	}
