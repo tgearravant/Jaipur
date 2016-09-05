@@ -7,9 +7,8 @@ import java.util.List;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import net.tullco.jaipur.models.cards.CamelCard;
-import net.tullco.jaipur.state.State;
 
-public class Player implements Sprite, Renderable {
+public class Player implements Sprite, Renderable, CardContainer {
 	
 	private final static int HERD_BUFFER_X = 20;
 	private final static int HAND_SIZE_X=600;
@@ -20,26 +19,37 @@ public class Player implements Sprite, Renderable {
 	private Card dummyCamel;
 	private int xLocation;
 	private int yLocation;
+	
 	public Player(){
 		this.hand = new ArrayList<Card>();
 		this.herd = new ArrayList<CamelCard>();
 		this.gatheredResources = new ArrayList<Resource>();
 		this.dummyCamel = new CamelCard();
 	}
-	public void addCardToHand(Card c){
+	@Override
+	public void addCard(Card c){
 		if(c instanceof CamelCard){
 			herd.add((CamelCard) c);
+			c.setHidden(true);
+			c.setDestinationCoordinates(getHerdX(), getHerdY() );
+			c.setClickable(false);
 		}
 		else{
 			hand.add(c);
+			hand.sort(null);
 		}
 	}
-	public void addCardsToHand(List<Card> cards){
+	@Override
+	public void addCards(List<Card> cards){
 		for(Card c: cards)
-			addCardToHand(c);
+			addCard(c);
 	}
 	public List<Card> getHand(){
 		return this.hand;
+	}
+	@Override
+	public int getSize() {
+		return this.hand.size();
 	}
 	public int herdSize(){
 		return this.herd.size();
@@ -48,12 +58,21 @@ public class Player implements Sprite, Renderable {
 		if(num > this.herdSize())
 			throw new IndexOutOfBoundsException();
 		List<Card> removedCamels = new ArrayList<Card>();
-		for(int i=0;i<num;i++)
-			removedCamels.add(this.herd.remove(0));
+		for(int i=0;i<num;i++){
+			Card c = this.herd.remove(0);
+			c.setHidden(false);
+			removedCamels.add(c);
+		}
 		return removedCamels;
 	}
 	public void addReource(Resource r){
 		this.gatheredResources.add(r);
+	}
+	public int getHerdX(){
+		return HERD_BUFFER_X+HAND_SIZE_X;
+	}
+	public int getHerdY(){
+		return this.yLocation;
 	}
 	@Override
 	public void render(GraphicsContext gc) {
@@ -65,6 +84,8 @@ public class Player implements Sprite, Renderable {
 		int x = (int) (pic.getMaxX()+HERD_BUFFER_X);
 		int y = (int) ((pic.getMaxY()+pic.getMinY())/2);
 		gc.strokeText(Integer.toString(this.herdSize()), x, y);
+		for(Card c:herd)
+			c.render(gc);
 	}
 	public Rectangle2D getBoundary() {
 		//TODO I should do this at some point. ;)
@@ -86,18 +107,25 @@ public class Player implements Sprite, Renderable {
 	}
 	public void setClickables(){
 		for(Card c : hand)
-			State.addClickable(c);
+			c.setClickable(true);
 	}
 	public void unsetClickables(){
 		for(Card c : hand){
-			if (State.getClickables().contains(c))
-				State.getClickables().remove(c);
+			c.setClickable(false);
 		}
 	}
 	public void resetClickables(){
 		this.unsetClickables();
 		this.setClickables();
 	}
+	@Override
+	public Card removeCard(Card c){
+		if(this.hand.remove(c))
+			return c;
+		else
+			return null;
+	}
+	@Override
 	public List<Card> removeActiveCards(){
 		Iterator<Card> i = this.hand.iterator();
 		ArrayList<Card> removedCards = new ArrayList<Card>();

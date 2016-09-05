@@ -40,7 +40,7 @@ public class TakeAction implements StateTransition {
 			throw new InvalidStateTransitionException();
 		// if one market card is selected, take it
 		else if(marketSelections.size()==1 && handSelections.size()==0 ){
-			player.addCardsToHand(State.getMarket().removeActiveCards());
+			player.addCards(State.getMarket().removeActiveCards());
 			System.out.println("Taking Cards");
 		}
 		//if only hand cards are selected, turn them in. If they are not all of the same type, throw an exception
@@ -52,7 +52,7 @@ public class TakeAction implements StateTransition {
 						throw new InvalidStateTransitionException();
 				}
 			}
-			State.getDiscard().addAll(player.removeActiveCards());
+			State.getDiscard().addCards(player.removeActiveCards());
 		}
 		// If you selected more hand cards than market cards, throw an exception 
 		else if(marketSelections.size()<handSelections.size()){
@@ -74,10 +74,10 @@ public class TakeAction implements StateTransition {
 			//if hand size is zero, we might be taking camels. Let's figure that out...
 			if(handSelections.size()==0){
 				if(allCamels&&anyCamels){
-					player.addCardsToHand(State.getMarket().removeActiveCards());
+					player.addCards(State.getMarket().removeActiveCards());
 				}else if(!allCamels&&!anyCamels&&player.herdSize()>=marketSelections.size()){
 					int camelsNeeded = marketSelections.size();
-					player.addCardsToHand(State.getMarket().removeActiveCards());
+					player.addCards(State.getMarket().removeActiveCards());
 					State.getMarket().addCards(player.getCamels(camelsNeeded));
 				}
 			}

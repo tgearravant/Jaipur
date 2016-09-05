@@ -6,10 +6,11 @@ import java.util.List;
 
 import javafx.scene.canvas.Canvas;
 import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
-import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.Player;
 import net.tullco.jaipur.models.Renderable;
 import net.tullco.jaipur.models.Clickable;
+import net.tullco.jaipur.models.Deck;
+import net.tullco.jaipur.models.Discard;
 import net.tullco.jaipur.models.Market;
 import net.tullco.jaipur.state.transitions.StateTransition;
 
@@ -27,11 +28,11 @@ public class State {
 	private static List<Renderable> renderables=new ArrayList<Renderable>();
 	private static List<Clickable> clickables=new ArrayList<Clickable>();
 	private static List<String> validStates;
-	private static ArrayList<Card> deck;
+	private static Deck deck;
 	private static Player player1;
 	private static Player player2;
 	private static Market market;
-	private static ArrayList<Card> discard;
+	private static Discard discard;
 	public static void changeState(StateTransition t) throws InvalidStateTransitionException{
 		if(!t.getValidOldStates().contains(State.state))
 			throw new InvalidStateTransitionException();
@@ -47,10 +48,10 @@ public class State {
 	public static String getState(){
 		return State.state;
 	}
-	public static ArrayList<Card> getDeck() {
+	public static Deck getDeck() {
 		return deck;
 	}
-	public static void setDeck(ArrayList<Card> deck) {
+	public static void setDeck(Deck deck) {
 		State.deck = deck;
 	}
 	public static Player getPlayer1() {
@@ -71,10 +72,10 @@ public class State {
 	public static void setMarket(Market market) {
 		State.market = market;
 	}
-	public static ArrayList<Card> getDiscard() {
+	public static Discard getDiscard() {
 		return discard;
 	}
-	public static void setDiscard(ArrayList<Card> discard) {
+	public static void setDiscard(Discard discard) {
 		State.discard = discard;
 	}
 	public static void setCanvas(Canvas c){
@@ -86,8 +87,17 @@ public class State {
 	public static List<Renderable> getRenderable(){
 		return State.renderables;
 	}
-	public static void addClickable(Clickable c){
-		State.clickables.add(c);
+	public static boolean addClickable(Clickable c){
+		if (!State.clickables.contains(c)){
+			State.clickables.add(c);
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	public static boolean removeClickable(Clickable c){
+		return State.clickables.remove(c);
 	}
 	public static List<Clickable> getClickables(){
 		return State.clickables;

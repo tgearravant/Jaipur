@@ -5,15 +5,18 @@ import java.io.InputStream;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import net.tullco.jaipur.state.State;
 
-public abstract class Card implements Sprite, Clickable, Renderable {
+public abstract class Card implements Sprite, Clickable, Renderable, Comparable<Card> {
 
-	private final int CARD_SIZE_X=70;
-	private final int CARD_SIZE_Y=100;
+	public static final int CARD_SIZE_X=70;
+	public static final int CARD_SIZE_Y=100;
 	private final int CARD_DRAW_LOCATION_X=0;
 	private final int CARD_DRAW_LOCATION_Y=0;
 	private final double MOVEMENT_SECONDS=2.0;
 	private final int MOVEMENT_GAIN=6;
+	
+	private static Image cardBack;
 
 	private String resource;
 	private Image image;
@@ -25,6 +28,7 @@ public abstract class Card implements Sprite, Clickable, Renderable {
 	private int destinationY;
 	private long moveStartTime;
 	private boolean active=false;
+	private boolean hidden=false;
 	
 	public Card(String resource){
 		this.resource=resource;
@@ -49,7 +53,19 @@ public abstract class Card implements Sprite, Clickable, Renderable {
 		return this.image;
 	}
 	public void render(GraphicsContext gc){
-		double completionPercentage = (System.currentTimeMillis()-this.moveStartTime)/(this.MOVEMENT_SECONDS*1000);
+		updateXY();
+		if(this.hidden && this.destinationX == this.xLoc && this.destinationY == this.yLoc)
+			return;
+		gc.drawImage(getImage(), xLoc, yLoc, CARD_SIZE_X, CARD_SIZE_Y);
+	}
+	public Rectangle2D getBoundary(){
+		return new Rectangle2D(xLoc, yLoc, CARD_SIZE_X, CARD_SIZE_Y);
+	}
+	public double getMovementCompletionPercentage(){
+		return (System.currentTimeMillis()-this.moveStartTime)/(this.MOVEMENT_SECONDS*1000);
+	}
+	public void updateXY(){
+		double completionPercentage = getMovementCompletionPercentage();
 		if (completionPercentage > 1){
 			this.xLoc=this.destinationX;
 			this.yLoc=this.destinationY;
@@ -60,12 +76,9 @@ public abstract class Card implements Sprite, Clickable, Renderable {
 		if (this.destinationY!=this.yLoc){
 			this.yLoc = getMovementCoord(completionPercentage,this.startY,this.destinationY);
 		}
-		gc.drawImage(getImage(), xLoc, yLoc, CARD_SIZE_X, CARD_SIZE_Y);
-	}
-	public Rectangle2D getBoundary(){
-		return new Rectangle2D(xLoc, yLoc, CARD_SIZE_X, CARD_SIZE_Y);
 	}
 	public void setDestinationCoordinates(int xDest, int yDest){
+		updateXY();
 		this.startX=this.xLoc;
 		this.startY=this.yLoc;
 		this.destinationX=xDest;
@@ -75,6 +88,9 @@ public abstract class Card implements Sprite, Clickable, Renderable {
 	public int getMovementCoord(double completionPercentage, int start, int destination){
 		double newLocation = ((Math.pow(completionPercentage-1, MOVEMENT_GAIN))*(start-destination))+destination;
 		return (int) Math.round(newLocation);
+	}
+	public boolean atDestination(){
+		return(this.xLoc==this.destinationX && this.yLoc==this.destinationY);
 	}
 	public void click(){
 		if(this.active){
@@ -98,10 +114,35 @@ public abstract class Card implements Sprite, Clickable, Renderable {
 	public boolean active(){
 		return this.active;
 	}
+	public void setHidden(boolean hidden){
+		this.hidden=hidden;
+	}
 	public void printCoords(){
 		System.out.println("X: "+this.xLoc + " Y: "+this.yLoc);
 	}
 	public void printDestinationCoords(){
 		System.out.println("Dest X: "+this.destinationX + " Dest Y: "+this.destinationY);
+	}
+	public void setClickable(boolean b){
+		if(b)
+			State.addClickable(this);
+		else
+			State.removeClickable(this);
+	}
+	@Override
+	public int compareTo(Card c){
+		if(this==c)
+			return 0;
+		else if(this.getResource().equals(c.getResource()))
+			return 0;
+		else
+			return this.getResource().compareTo(c.getResource());
+	}
+
+	public static Image getCardBack(){
+		if(Card.cardBack!=null)
+			return Card.cardBack;
+		Card.cardBack = new Image(Card.class.getClassLoader().getResourceAsStream("assets/img/cards/back.png"));
+		return cardBack;
 	}
 }

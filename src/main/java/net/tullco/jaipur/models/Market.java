@@ -6,9 +6,8 @@ import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 import net.tullco.jaipur.models.cards.CamelCard;
-import net.tullco.jaipur.state.State;
 
-public class Market implements Renderable {
+public class Market implements Renderable, CardContainer {
 	private static final int MARKET_SIZE=5;
 	private static final int STARTING_CAMEL_CARDS=3;
 	public static final int MARKET_X=10;
@@ -17,8 +16,10 @@ public class Market implements Renderable {
 	
 	private List<Card> contents;
 	private boolean camelsActive=false;
+	private Deck deck;
 
-	public Market(){
+	public Market(Deck d){
+		this.deck=d;
 		this.contents=new ArrayList<Card>();
 		this.setUp();
 	}
@@ -35,15 +36,19 @@ public class Market implements Renderable {
 	public void setUp(){
 		for(int i = 0; i < Market.STARTING_CAMEL_CARDS; i++)
 			this.contents.add(new CamelCard());
+		replenish();
 	}
 	public void replenish(){
 		while(this.contents.size() < MARKET_SIZE)
-			this.contents.add(State.getDeck().remove(0));
+			this.contents.add(deck.drawCard());
+		this.contents.sort(null);
 		resetCardLocations();
 	}
+	@Override
 	public void addCards(List<Card> cards){
 		this.contents.addAll(cards);
 	}
+	@Override
 	public List<Card> removeActiveCards(){
 		Iterator<Card> i = this.contents.iterator();
 		ArrayList<Card> removedCards = new ArrayList<Card>();
@@ -93,13 +98,11 @@ public class Market implements Renderable {
 	}
 	public void setClickables(){
 		for(Card c : this.contents)
-			if(!State.getClickables().contains(c))
-				State.addClickable(c);
+			c.setClickable(true);
 	}
 	public void unsetClickables(){
 		for(Card c : this.contents){
-			if (State.getClickables().contains(c))
-				State.getClickables().remove(c);
+			c.setClickable(false);
 		}
 	}
 	public void resetClickables(){
@@ -108,5 +111,20 @@ public class Market implements Renderable {
 	}
 	public boolean contains(Card c){
 		return this.contents.contains(c);
+	}
+	@Override
+	public int getSize() {
+		return this.contents.size();
+	}
+	@Override
+	public void addCard(Card c) {
+		this.contents.add(c);
+	}
+	@Override
+	public Card removeCard(Card c) {
+		if(this.contents.remove(c))
+			return c;
+		else
+			return null;
 	}
 }
