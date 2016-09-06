@@ -46,7 +46,8 @@ public class Market implements Renderable, CardContainer {
 	}
 	@Override
 	public void addCards(List<Card> cards){
-		this.contents.addAll(cards);
+		for(Card c: cards)
+			this.addCard(c);
 	}
 	@Override
 	public List<Card> removeActiveCards(){
@@ -118,6 +119,7 @@ public class Market implements Renderable, CardContainer {
 	}
 	@Override
 	public void addCard(Card c) {
+		c.setClickable(true);
 		this.contents.add(c);
 	}
 	@Override

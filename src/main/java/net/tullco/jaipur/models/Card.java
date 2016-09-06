@@ -29,6 +29,7 @@ public abstract class Card implements Sprite, Clickable, Renderable, Comparable<
 	private long moveStartTime;
 	private boolean active=false;
 	private boolean hidden=false;
+	private boolean clickable=false;
 	
 	public Card(String resource){
 		this.resource=resource;
@@ -38,6 +39,7 @@ public abstract class Card implements Sprite, Clickable, Renderable, Comparable<
 		this.startY=this.CARD_DRAW_LOCATION_Y;
 		this.destinationX=this.CARD_DRAW_LOCATION_X;
 		this.destinationY=this.CARD_DRAW_LOCATION_Y;
+		State.addClickable(this);
 	}
 	
 	public String getResource(){
@@ -93,6 +95,8 @@ public abstract class Card implements Sprite, Clickable, Renderable, Comparable<
 		return(this.xLoc==this.destinationX && this.yLoc==this.destinationY);
 	}
 	public void click(){
+		if(!this.clickable)
+			return;
 		if(this.active){
 			this.deactivate();
 		}else{
@@ -124,10 +128,7 @@ public abstract class Card implements Sprite, Clickable, Renderable, Comparable<
 		System.out.println("Dest X: "+this.destinationX + " Dest Y: "+this.destinationY);
 	}
 	public void setClickable(boolean b){
-		if(b)
-			State.addClickable(this);
-		else
-			State.removeClickable(this);
+		this.clickable=b;
 	}
 	@Override
 	public int compareTo(Card c){

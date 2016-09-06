@@ -9,6 +9,7 @@ import net.tullco.jaipur.models.Deck;
 import net.tullco.jaipur.models.Discard;
 import net.tullco.jaipur.models.Market;
 import net.tullco.jaipur.models.Player;
+import net.tullco.jaipur.models.ResourceMarket;
 import net.tullco.jaipur.state.State;
 
 public class Initialize implements StateTransition {
@@ -20,6 +21,7 @@ public class Initialize implements StateTransition {
 		Player player1 = new Player();
 		Player player2 = new Player();
 		Discard discard = new Discard();
+		ResourceMarket resourceMarket = new ResourceMarket();
 		for(int i=0; i<5;i++){
 			player1.addCard(deck.drawCard());
 			player2.addCard(deck.drawCard());
@@ -37,6 +39,8 @@ public class Initialize implements StateTransition {
 		State.addRenderable(deck);
 		State.setDiscard(discard);
 		State.addRenderable(discard);
+		State.setResourceMarket(resourceMarket);
+		State.addRenderable(resourceMarket);
 		Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount( Timeline.INDEFINITE );
         State.getMarket().replenish();

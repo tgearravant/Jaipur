@@ -9,6 +9,7 @@ import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
 import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.Clickable;
 import net.tullco.jaipur.state.State;
+import net.tullco.jaipur.state.transitions.HandLimitDiscard;
 import net.tullco.jaipur.state.transitions.TakeAction;
 
 public class Controller {
@@ -33,11 +34,15 @@ public class Controller {
 		scene.setOnKeyReleased(
 				new EventHandler<KeyEvent>(){
 					public void handle(KeyEvent e){
+						//Space means we're trying to do stuff! Let's do it! :)
 						if(e.getText().equals(" "))
 							try {
-								State.changeState(new TakeAction());
+								String currentState=State.getState();
+								if(currentState.equals("PLAYER1")||currentState.equals("PLAYER2"))
+									State.changeState(new TakeAction());
+								if(currentState.equals("PLAYER1DISCARD")||currentState.equals("PLAYER2DISCARD"))
+									State.changeState(new HandLimitDiscard());
 							} catch (InvalidStateTransitionException e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 					}

@@ -7,6 +7,7 @@ import java.util.List;
 import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
 import net.tullco.jaipur.models.Card;
 import net.tullco.jaipur.models.Player;
+import net.tullco.jaipur.models.Resource;
 import net.tullco.jaipur.models.cards.CamelCard;
 import net.tullco.jaipur.state.State;
 
@@ -52,7 +53,10 @@ public class TakeAction implements StateTransition {
 						this.resetAndThrowException(marketSelections, handSelections);
 				}
 			}
-			State.getDiscard().addCards(player.removeActiveCards());
+			List<Card> cardsForDiscard = player.removeActiveCards();
+			List<Resource> resourcesToGain = State.getResourceMarket().getResources(cardsForDiscard);
+			player.addResources(resourcesToGain);
+			State.getDiscard().addCards(cardsForDiscard);
 		}
 		// If you selected more hand cards than market cards, throw an exception 
 		else if(marketSelections.size()<handSelections.size()){
@@ -83,9 +87,17 @@ public class TakeAction implements StateTransition {
 					this.resetAndThrowException(marketSelections, handSelections);
 				}
 			}else{
-				if(anyCamels)
+				if(anyCamels && !allCamels)
 					this.resetAndThrowException(marketSelections, handSelections);
-				 
+				else{
+					marketSelections=State.getMarket().removeActiveCards();
+					handSelections=player.removeActiveCards();
+					int camelsNeeded = marketSelections.size() - handSelections.size();
+					List<Card> playerCamels = (camelsNeeded > 0?player.getCamels(camelsNeeded):new ArrayList<Card>());
+					State.getMarket().addCards(handSelections);
+					State.getMarket().addCards(playerCamels);
+					player.addCards(marketSelections);
+				}
 			}
 		}
 		State.getMarket().replenish();
@@ -94,18 +106,20 @@ public class TakeAction implements StateTransition {
 		player.unsetClickables();
 		if(player.getSize() > State.HAND_LIMIT){
 			player.resetClickables();
+			State.getMarket().unsetClickables();
 			if(State.getState().equals("PLAYER1")){
 				State.setState("PLAYER1DISCARD");
 			}else{
 				State.setState("PLAYER2DISCARD");
 			}
-		}
-		if(State.getState().equals("PLAYER1")){
-			State.getPlayer2().setClickables();
-			State.setState("PLAYER2");
 		}else{
-			State.getPlayer1().setClickables();
-			State.setState("PLAYER1");
+			if(State.getState().equals("PLAYER1")){
+				State.getPlayer2().setClickables();
+				State.setState("PLAYER2");
+			}else{
+				State.getPlayer1().setClickables();
+				State.setState("PLAYER1");
+			}
 		}
 	}
 

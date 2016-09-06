@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import net.tullco.jaipur.exceptions.InvalidStateTransitionException;
 import net.tullco.jaipur.models.Player;
 import net.tullco.jaipur.models.Renderable;
+import net.tullco.jaipur.models.ResourceMarket;
 import net.tullco.jaipur.models.Clickable;
 import net.tullco.jaipur.models.Deck;
 import net.tullco.jaipur.models.Discard;
@@ -38,6 +39,7 @@ public class State {
 	private static Player player2;
 	private static Market market;
 	private static Discard discard;
+	private static ResourceMarket resourceMarket;
 
 	public static void changeState(StateTransition t) throws InvalidStateTransitionException{
 		if(!t.getValidOldStates().contains(State.state))
@@ -83,6 +85,12 @@ public class State {
 	}
 	public static void setDiscard(Discard discard) {
 		State.discard = discard;
+	}
+	public static ResourceMarket getResourceMarket() {
+		return State.resourceMarket;
+	}
+	public static void setResourceMarket(ResourceMarket rm) {
+		State.resourceMarket = rm;
 	}
 	public static void setCanvas(Canvas c){
 		State.canvas=c;

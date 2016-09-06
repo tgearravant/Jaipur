@@ -67,7 +67,7 @@ public class Main extends Application {
                     public void handle(ActionEvent ae){
                     	Discard d = State.getDiscard();
                     	if(d!=null)
-                    		System.out.println(d.getSize());
+                    		System.out.println(State.getState());
                     	}
 			});
         gameLoop.getKeyFrames().add( kf );

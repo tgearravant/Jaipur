@@ -12,6 +12,8 @@ public class Player implements Sprite, Renderable, CardContainer {
 	
 	private final static int HERD_BUFFER_X = 20;
 	private final static int HAND_SIZE_X=600;
+	private final static int RESOURCE_X=750;
+	private final static int RESOURCE_BUFFER=15;
 	
 	private ArrayList<Card> hand;
 	private ArrayList<CamelCard> herd;
@@ -38,11 +40,13 @@ public class Player implements Sprite, Renderable, CardContainer {
 			hand.add(c);
 			hand.sort(null);
 		}
+		this.resetDestinationCoordinates();
 	}
 	@Override
 	public void addCards(List<Card> cards){
-		for(Card c: cards)
+		for(Card c: cards){
 			addCard(c);
+		}
 	}
 	public List<Card> getHand(){
 		return this.hand;
@@ -65,8 +69,13 @@ public class Player implements Sprite, Renderable, CardContainer {
 		}
 		return removedCamels;
 	}
-	public void addReource(Resource r){
+	public void addResource(Resource r){
+		r.setDestinationCoordinates(RESOURCE_X+(RESOURCE_BUFFER*this.gatheredResources.size()), yLocation);
 		this.gatheredResources.add(r);
+	}
+	public void addResources(List<Resource> resources){
+		for (Resource r: resources)
+			this.addResource(r);
 	}
 	public int getHerdX(){
 		return HERD_BUFFER_X+HAND_SIZE_X;
@@ -86,6 +95,8 @@ public class Player implements Sprite, Renderable, CardContainer {
 		gc.strokeText(Integer.toString(this.herdSize()), x, y);
 		for(Card c:herd)
 			c.render(gc);
+		for(Resource r: this.gatheredResources)
+			r.render(gc);
 	}
 	public Rectangle2D getBoundary() {
 		//TODO I should do this at some point. ;)
@@ -120,8 +131,10 @@ public class Player implements Sprite, Renderable, CardContainer {
 	}
 	@Override
 	public Card removeCard(Card c){
-		if(this.hand.remove(c))
+		if(this.hand.remove(c)){
+			this.resetDestinationCoordinates();
 			return c;
+		}
 		else
 			return null;
 	}
@@ -137,6 +150,13 @@ public class Player implements Sprite, Renderable, CardContainer {
 			}
 		}
 		this.hand.removeAll(removedCards);
+		this.resetDestinationCoordinates();
 		return removedCards;
+	}
+	public int getScore(){
+		int score = 0;
+		for(Resource r: this.gatheredResources)
+			score+=r.getValue();
+		return score;
 	}
 }
