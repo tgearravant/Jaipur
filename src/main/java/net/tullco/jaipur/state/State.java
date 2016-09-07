@@ -15,6 +15,7 @@ import net.tullco.jaipur.models.Clickable;
 import net.tullco.jaipur.models.Deck;
 import net.tullco.jaipur.models.Discard;
 import net.tullco.jaipur.models.Market;
+import net.tullco.jaipur.models.NotificationBox;
 import net.tullco.jaipur.state.transitions.StateTransition;
 
 public class State {
@@ -40,15 +41,30 @@ public class State {
 	private static Market market;
 	private static Discard discard;
 	private static ResourceMarket resourceMarket;
+	private static NotificationBox notificationBox;
 
 	public static void changeState(StateTransition t) throws InvalidStateTransitionException{
 		if(!t.getValidOldStates().contains(State.state))
 			throw new InvalidStateTransitionException();
-		t.update();
+		try{
+			t.update();
+		}catch(InvalidStateTransitionException e){
+			if(e.getMessage()==null)
+				throw e;
+			State.notificationBox.setErrorMessage(e.getMessage());
+		}
 	}
 	public static void setState(String state){
 		State.oldState = State.state;
 		State.state=state;
+		if(state.equals("PLAYER1"))
+			State.notificationBox.setMessage("Player 1's Turn.");
+		if(state.equals("PLAYER1DISCARD"))
+			State.notificationBox.setMessage("Player 1, discard to "+HAND_LIMIT+" cards.");
+		if(state.equals("PLAYER2"))
+			State.notificationBox.setMessage("Player 2's Turn.");
+		if(state.equals("PLAYER1DISCARD"))
+			State.notificationBox.setMessage("Player 2, discard to "+HAND_LIMIT+" cards.");
 	}
 	public static String getOldState(){
 		return State.oldState;
@@ -91,6 +107,12 @@ public class State {
 	}
 	public static void setResourceMarket(ResourceMarket rm) {
 		State.resourceMarket = rm;
+	}
+	public static NotificationBox getNotificationBox() {
+		return notificationBox;
+	}
+	public static void setNotificationBox(NotificationBox notificationBox) {
+		State.notificationBox = notificationBox;
 	}
 	public static void setCanvas(Canvas c){
 		State.canvas=c;

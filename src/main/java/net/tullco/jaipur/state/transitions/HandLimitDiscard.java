@@ -25,9 +25,10 @@ public class HandLimitDiscard implements StateTransition {
 		}
 		
 		if(p.getSize()-playerSelected.size()!= State.HAND_LIMIT){
-			System.out.println("Hand Size: "+p.getSize());
-			System.out.println("Selected: "+playerSelected.size());
-			throw new InvalidStateTransitionException();
+			if (p.getSize()-playerSelected.size() > State.HAND_LIMIT)
+				throw new InvalidStateTransitionException("Select more cards");
+			else
+				throw new InvalidStateTransitionException("Select less cards.");
 		}
 		else{
 			State.getDiscard().addCards(p.removeActiveCards());

@@ -20,6 +20,7 @@ public class Discard implements CardContainer, Renderable {
 			return;
 		else if(this.getSize()==1){
 			Card c = this.discard.get(0);
+			c.setHidden(false);
 			c.render(gc);
 		}
 		else{
@@ -65,8 +66,15 @@ public class Discard implements CardContainer, Renderable {
 		if (this.discard.remove(c))
 			return c;
 		else
-			return null;
-			
+			return null;			
+	}
+	
+	public List<Card> removeAllCards() {
+		ArrayList<Card> cards = new ArrayList<Card>();
+		while(!this.discard.isEmpty()){
+			cards.add(this.discard.remove(0));
+		}
+		return cards;
 	}
 
 }

@@ -38,7 +38,7 @@ public class TakeAction implements StateTransition {
 			}
 		//if nothing is selected, throw an invalid transition exception
 		if(marketSelections.size()==0 && handSelections.size()==0)
-			this.resetAndThrowException(marketSelections, handSelections);
+			this.resetAndThrowException("Select something!",marketSelections, handSelections);
 		// if one market card is selected, take it
 		else if(marketSelections.size()==1 && handSelections.size()==0 ){
 			player.addCards(State.getMarket().removeActiveCards());
@@ -50,7 +50,7 @@ public class TakeAction implements StateTransition {
 				Card firstCard = handSelections.get(0);
 				for(int i=1;i<handSelections.size();i++){
 					if (firstCard.getResource()!=handSelections.get(i).getResource())
-						this.resetAndThrowException(marketSelections, handSelections);
+						this.resetAndThrowException("Can only turn in one resource at a time.",marketSelections, handSelections);
 				}
 			}
 			List<Card> cardsForDiscard = player.removeActiveCards();
@@ -60,7 +60,7 @@ public class TakeAction implements StateTransition {
 		}
 		// If you selected more hand cards than market cards, throw an exception 
 		else if(marketSelections.size()<handSelections.size()){
-			this.resetAndThrowException(marketSelections, handSelections);
+			this.resetAndThrowException("Need to select more market cards.",marketSelections, handSelections);
 		}
 		// Otherwise, we're trying to trade cards or take camels, so let's figure out which.
 		else{
@@ -84,11 +84,11 @@ public class TakeAction implements StateTransition {
 					player.addCards(State.getMarket().removeActiveCards());
 					State.getMarket().addCards(player.getCamels(camelsNeeded));
 				}else{
-					this.resetAndThrowException(marketSelections, handSelections);
+					this.resetAndThrowException("Invalid trade!",marketSelections, handSelections);
 				}
 			}else{
 				if(anyCamels && !allCamels)
-					this.resetAndThrowException(marketSelections, handSelections);
+					this.resetAndThrowException("Can't take camels and non camels.",marketSelections, handSelections);
 				else{
 					marketSelections=State.getMarket().removeActiveCards();
 					handSelections=player.removeActiveCards();
@@ -123,12 +123,12 @@ public class TakeAction implements StateTransition {
 		}
 	}
 
-	private void resetAndThrowException(List<Card> marketSelections, List<Card> handSelections) throws InvalidStateTransitionException{
+	private void resetAndThrowException(String message,List<Card> marketSelections, List<Card> handSelections) throws InvalidStateTransitionException{
 		for(Card c: marketSelections)
 			c.deactivate();
 		for(Card c: handSelections)
 			c.deactivate();
-		throw new InvalidStateTransitionException();
+		throw new InvalidStateTransitionException(message);
 	}
 	
 	@Override

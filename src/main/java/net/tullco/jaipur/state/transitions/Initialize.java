@@ -8,6 +8,7 @@ import javafx.animation.Timeline;
 import net.tullco.jaipur.models.Deck;
 import net.tullco.jaipur.models.Discard;
 import net.tullco.jaipur.models.Market;
+import net.tullco.jaipur.models.NotificationBox;
 import net.tullco.jaipur.models.Player;
 import net.tullco.jaipur.models.ResourceMarket;
 import net.tullco.jaipur.state.State;
@@ -16,6 +17,7 @@ public class Initialize implements StateTransition {
 	public Initialize(){}
 
 	public void update() {
+		NotificationBox notificationBox = new NotificationBox();
 		Deck deck = new Deck();
 		Market market = new Market(deck);
 		Player player1 = new Player();
@@ -41,6 +43,8 @@ public class Initialize implements StateTransition {
 		State.addRenderable(discard);
 		State.setResourceMarket(resourceMarket);
 		State.addRenderable(resourceMarket);
+		State.setNotificationBox(notificationBox);
+		State.addRenderable(notificationBox);
 		Timeline gameLoop = new Timeline();
         gameLoop.setCycleCount( Timeline.INDEFINITE );
         State.getMarket().replenish();

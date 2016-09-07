@@ -13,6 +13,7 @@ import net.tullco.jaipur.models.cards.GoldCard;
 import net.tullco.jaipur.models.cards.LeatherCard;
 import net.tullco.jaipur.models.cards.SilverCard;
 import net.tullco.jaipur.models.cards.SpiceCard;
+import net.tullco.jaipur.state.State;
 
 public class Deck implements CardContainer, Renderable{
 
@@ -53,6 +54,8 @@ public class Deck implements CardContainer, Renderable{
 	}
 	
 	public Card drawCard(){
+		if(this.deck.isEmpty())
+			this.addCards(State.getDiscard().removeAllCards());
 		Card c = this.deck.remove(0);
 		c.setHidden(false);
 		return c;
@@ -80,8 +83,10 @@ public class Deck implements CardContainer, Renderable{
 
 	@Override
 	public Card removeCard(Card c) {
-		// TODO Auto-generated method stub
-		return null;
+		if(this.deck.remove(c))
+			return c;
+		else
+			return null;
 	}
 
 	@Override
@@ -94,5 +99,4 @@ public class Deck implements CardContainer, Renderable{
 	public Image getImage(){
 		return Card.getCardBack();
 	}
-
 }
